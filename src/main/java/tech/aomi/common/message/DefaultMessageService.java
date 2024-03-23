@@ -29,7 +29,7 @@ import java.util.UUID;
  * @author Sean createAt 2021/6/22
  */
 @Slf4j
-public abstract class DefaultMessageService implements MessageService {
+public class DefaultMessageService implements MessageService {
 
     private final String clientId;
     /**
@@ -53,6 +53,24 @@ public abstract class DefaultMessageService implements MessageService {
 
     private final MessageEncodeDecodeService messageEncodeDecodeService;
 
+    public DefaultMessageService(
+            String base64PublicKey,
+            String base64PrivateKey,
+            String base64OtherPartyPublicKey,
+            String clientId,
+            MessageEncodeDecodeService messageEncodeDecodeService
+    ) {
+        this(
+                base64PublicKey,
+                base64PrivateKey,
+                base64OtherPartyPublicKey,
+                clientId,
+                "yyyy-MM-dd HH:mm:ss.SSS",
+                "UTF-8",
+                SignType.RSA,
+                messageEncodeDecodeService
+        );
+    }
 
     public DefaultMessageService(
             String base64PublicKey,
