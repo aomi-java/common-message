@@ -29,7 +29,7 @@ import java.util.UUID;
  * @author Sean createAt 2021/6/22
  */
 @Slf4j
-public abstract class AbstractMessageService implements MessageService {
+public abstract class DefaultMessageService implements MessageService {
 
     private final String clientId;
     /**
@@ -51,21 +51,10 @@ public abstract class AbstractMessageService implements MessageService {
 
     private final KeyService keyService;
 
+    private final MessageEncodeDecodeService messageEncodeDecodeService;
 
-    public AbstractMessageService(
-            String base64PublicKey,
-            String base64PrivateKey,
-            String base64OtherPartyPublicKey,
-            String clientId,
-            String timestampFormat,
-            String charset,
-            SignType signType
-    ) {
-        this(base64PublicKey, base64PrivateKey, base64OtherPartyPublicKey, clientId, timestampFormat, charset, signType, new DefaultKeyService());
-    }
 
-    @SneakyThrows
-    public AbstractMessageService(
+    public DefaultMessageService(
             String base64PublicKey,
             String base64PrivateKey,
             String base64OtherPartyPublicKey,
@@ -73,7 +62,32 @@ public abstract class AbstractMessageService implements MessageService {
             String timestampFormat,
             String charset,
             SignType signType,
-            KeyService keyService
+            MessageEncodeDecodeService messageEncodeDecodeService
+    ) {
+        this(
+                base64PublicKey,
+                base64PrivateKey,
+                base64OtherPartyPublicKey,
+                clientId,
+                timestampFormat,
+                charset,
+                signType,
+                new DefaultKeyService(),
+                messageEncodeDecodeService
+        );
+    }
+
+    @SneakyThrows
+    public DefaultMessageService(
+            String base64PublicKey,
+            String base64PrivateKey,
+            String base64OtherPartyPublicKey,
+            String clientId,
+            String timestampFormat,
+            String charset,
+            SignType signType,
+            KeyService keyService,
+            MessageEncodeDecodeService messageEncodeDecodeService
     ) {
         this.publicKey = RSAUtils.parsePublicKeyWithBase64(base64PublicKey);
         this.publicKeyBlockSize = RSAUtils.getBlockSize(this.publicKey);
@@ -87,6 +101,7 @@ public abstract class AbstractMessageService implements MessageService {
         this.charset = Charset.forName(Optional.ofNullable(charset).orElse("UTF-8"));
         this.signType = Optional.ofNullable(signType).orElse(SignType.RSA);
         this.keyService = keyService;
+        this.messageEncodeDecodeService = messageEncodeDecodeService;
     }
 
     @Override
@@ -142,7 +157,7 @@ public abstract class AbstractMessageService implements MessageService {
             throw new MessageEncryptException("传输密钥TRK加密失败", e);
         }
         Optional.ofNullable(payload).ifPresent(p -> {
-            byte[] payloadBytes = this.message2Byte(p);
+            byte[] payloadBytes = this.messageEncodeDecodeService.message2Byte(p);
             content.setRequestPayload(payloadBytes);
             try {
                 byte[] encryptPayload = this.keyService.aesEncrypt(trk, payloadBytes);
@@ -172,7 +187,7 @@ public abstract class AbstractMessageService implements MessageService {
 
     @Override
     public MessageContent parse(byte[] args) {
-        RequestMessage message = this.byte2Message(args, RequestMessage.class);
+        RequestMessage message = this.messageEncodeDecodeService.byte2Message(args, RequestMessage.class);
         return this.parse(message);
     }
 
@@ -216,7 +231,7 @@ public abstract class AbstractMessageService implements MessageService {
         message.setSuccess("0000".equals(status));
 
         Optional.ofNullable(payload).ifPresent(p -> {
-            byte[] payloadBytes = this.message2Byte(p);
+            byte[] payloadBytes = this.messageEncodeDecodeService.message2Byte(p);
             content.setResponsePayload(payloadBytes);
             try {
                 byte[] encryptPayload = this.keyService.aesEncrypt(content.getTrk(), payloadBytes);
@@ -232,7 +247,7 @@ public abstract class AbstractMessageService implements MessageService {
 
     @Override
     public void parseResponse(MessageContent content, byte[] args) {
-        ResponseMessage message = this.byte2Message(args, ResponseMessage.class);
+        ResponseMessage message = this.messageEncodeDecodeService.byte2Message(args, ResponseMessage.class);
         this.parseResponse(content, message);
     }
 

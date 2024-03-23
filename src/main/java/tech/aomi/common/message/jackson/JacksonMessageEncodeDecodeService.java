@@ -8,9 +8,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
-import tech.aomi.common.message.AbstractMessageService;
-import tech.aomi.common.message.KeyService;
-import tech.aomi.common.message.entity.SignType;
+import tech.aomi.common.message.MessageEncodeDecodeService;
 import tech.aomi.common.message.exception.MessageConvertException;
 
 import java.io.IOException;
@@ -19,7 +17,7 @@ import java.io.IOException;
  * @author Sean createAt 2021/7/11
  */
 @Slf4j
-public class JacksonMessageService extends AbstractMessageService {
+public class JacksonMessageEncodeDecodeService implements MessageEncodeDecodeService {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -39,15 +37,6 @@ public class JacksonMessageService extends AbstractMessageService {
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         ;
     }
-
-    public JacksonMessageService(String base64PublicKey, String base64PrivateKey, String base64OtherPartyPublicKey, String clientId, String timestampFormat, String charset, SignType signType) {
-        super(base64PublicKey, base64PrivateKey, base64OtherPartyPublicKey, clientId, timestampFormat, charset, signType);
-    }
-
-    public JacksonMessageService(String base64PublicKey, String base64PrivateKey, String base64OtherPartyPublicKey, String clientId, String timestampFormat, String charset, SignType signType, KeyService keyService) {
-        super(base64PublicKey, base64PrivateKey, base64OtherPartyPublicKey, clientId, timestampFormat, charset, signType, keyService);
-    }
-
 
     @Override
     public <T> byte[] message2Byte(T payload) {
