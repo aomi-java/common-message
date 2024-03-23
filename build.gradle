@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "8.1.0"
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+ext.spring_boot_version = "3.1.4"
+ext.spring_cloud_version = "2022.0.3"
+
+
+group 'tech.aomi.common'
+version '1.0.0_0-SNAPSHOT'
+
+apply from: 'https://onegit.com/enterprise/public/raw/master/spring-libraries.gradle'
+apply from: 'https://onegit.com/enterprise/public/raw/master/idea.gradle'
+apply from: 'https://onegit.com/enterprise/public/raw/master/publish-center.gradle'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_20
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${spring_boot_version}"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${spring_cloud_version}"
+    }
+}
+
+dependencies {
+    compileOnly "org.slf4j:slf4j-api:1.7.25"
+
+    compileOnly "com.fasterxml.jackson.core:jackson-core:2.16.1"
+    compileOnly "com.fasterxml.jackson.core:jackson-databind:2.16.1"
+
+    compileOnly "com.google.code.gson:gson:2.10.1"
+
+    compileOnly 'com.alibaba.fastjson2:fastjson2:2.0.47'
+
+}
