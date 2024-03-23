@@ -17,6 +17,7 @@ import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Map;
@@ -115,7 +116,7 @@ public class DefaultMessageService implements MessageService {
         this.otherPartyPublicKeyBlockSize = RSAUtils.getBlockSize(this.otherPartyPublicKey);
 
         this.clientId = clientId;
-        this.timestampFormat = DateTimeFormatter.ofPattern(timestampFormat);
+        this.timestampFormat = DateTimeFormatter.ofPattern(timestampFormat).withZone(ZoneId.systemDefault());
         this.charset = Charset.forName(Optional.ofNullable(charset).orElse("UTF-8"));
         this.signType = Optional.ofNullable(signType).orElse(SignType.RSA);
         this.keyService = keyService;
