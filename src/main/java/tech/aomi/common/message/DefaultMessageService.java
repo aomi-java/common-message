@@ -193,6 +193,7 @@ public class DefaultMessageService implements MessageService {
         message.setSignType(signType());
         message.setSign(this.sign(message.getSignType(), this.getSignData(message)));
 
+        content.setRequestMessage(message);
         content.setPublicKey(this.publicKey);
         content.setPrivateKey(this.privateKey);
         content.setOtherPartyPublicKey(this.otherPartyPublicKey);
