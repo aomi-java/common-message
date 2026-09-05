@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'tech.aomi.common'
-version '1.0.0_5-SNAPSHOT'
+version '1.0.0_6-SNAPSHOT'
 
 java {
     toolchain {
@@ -24,8 +24,8 @@ repositories {
 dependencies {
     compileOnly "org.slf4j:slf4j-api:1.7.25"
 
-    compileOnly "com.fasterxml.jackson.core:jackson-core:2.16.1"
-    compileOnly "com.fasterxml.jackson.core:jackson-databind:2.16.1"
+    compileOnly "tools.jackson.core:jackson-core:3.1.5"
+    compileOnly "tools.jackson.core:jackson-databind:3.1.5"
 
     compileOnly "com.google.code.gson:gson:2.10.1"
 
